@@ -55,7 +55,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/authsvc/**", "/login").permitAll().anyRequest().authenticated().and().csrf()
+		http.authorizeRequests().antMatchers("/authsvc/oauth/**","/authsvc/login", "/login").permitAll().anyRequest().authenticated().and().csrf()
 				.requireCsrfProtectionMatcher(csrfRequestMatcher()).csrfTokenRepository(csrfTokenRepository()).and()
 				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
 				.addFilterAfter(oAuth2AuthenticationProcessingFilter(), AbstractPreAuthenticatedProcessingFilter.class)
