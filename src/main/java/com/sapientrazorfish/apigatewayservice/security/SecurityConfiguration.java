@@ -1,6 +1,7 @@
 package com.sapientrazorfish.apigatewayservice.security;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.JwtAccessTokenConverterRestTemplateCustomizer;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -46,6 +49,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private ResourceServerTokenServices tokenServices;
+	
+	@Bean
+    JwtAccessTokenConverterRestTemplateCustomizer jwtRestTemplateCustomizer(LoadBalancerInterceptor loadBalancerInterceptor) {
+    		return template -> {
+    			template.setInterceptors(Arrays.asList(loadBalancerInterceptor));
+    		};
+    }
 
 	@Bean
 	@Primary
