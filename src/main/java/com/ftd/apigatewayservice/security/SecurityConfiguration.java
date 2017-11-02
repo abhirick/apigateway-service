@@ -1,4 +1,4 @@
-package com.sapientrazorfish.apigatewayservice.security;
+package com.ftd.apigatewayservice.security;
 
 import java.io.IOException;
 import java.util.Arrays;

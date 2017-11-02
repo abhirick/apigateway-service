@@ -1,4 +1,4 @@
-package com.sapientrazorfish.apigatewayservice;
+package com.ftd.apigatewayservice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import org.springframework.security.oauth2.client.token.grant.code.Authorization
 import org.springframework.security.oauth2.client.token.grant.implicit.ImplicitAccessTokenProvider;
 import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordAccessTokenProvider;
 
-import com.sapientrazorfish.apigatewayservice.filters.pre.SimpleFilter;
+import com.ftd.apigatewayservice.filters.pre.SimpleFilter;
 
 @EnableZuulProxy
 @SpringBootApplication

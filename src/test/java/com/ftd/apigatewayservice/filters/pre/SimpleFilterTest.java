@@ -1,7 +1,7 @@
-package com.sapientrazorfish.apigatewayservice.filters.pre;
+package com.ftd.apigatewayservice.filters.pre;
 
 import com.netflix.zuul.context.RequestContext;
-import com.sapientrazorfish.apigatewayservice.filters.pre.SimpleFilter;
+import com.ftd.apigatewayservice.filters.pre.SimpleFilter;
 
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.hamcrest.Matchers;

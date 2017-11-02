@@ -1,7 +1,7 @@
-package com.sapientrazorfish.apigatewayservice;
+package com.ftd.apigatewayservice;
 
 import com.netflix.zuul.context.RequestContext;
-import com.sapientrazorfish.apigatewayservice.GatewayApplication;
+import com.ftd.apigatewayservice.GatewayApplication;
 
 import org.junit.AfterClass;
 import org.junit.Before;

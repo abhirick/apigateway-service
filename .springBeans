@@ -7,8 +7,7 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
-		<config>java:com.sapientrazorfish.apigatewayservice.GatewayApplication</config>
-		<config>java:com.sapientrazorfish.apigatewayservice.GatewayApplicationTest$BookService</config>
+		<config>java:com.ftd.apigatewayservice.GatewayApplicationTest$BookService</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>
