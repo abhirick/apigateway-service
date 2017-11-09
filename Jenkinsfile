@@ -1,17 +1,17 @@
 node {
         def mvn_version = 'MVN_HOME'
         stage ('SCM') {
-                checkout([$class: 'GitSCM', branches: [[name: '*/apigateway-service-dev']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'snar15_ftd', url: 'https://snar15@del.tools.publicis.sapient.com/bitbucket/scm/ftd/apigateway-service.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/apigateway-service-dev']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'FTDGIT', url: 'https://s_fuser@del.tools.publicis.sapient.com/bitbucket/scm/ftd/apigateway-service.git']]])
         }
         stage('Build') {
                 withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) {
-                        sh "cd apigatewayservice && mvn clean package"
+                        sh "mvn clean package"
                 }
         }
         stage('Quality') {
                 withSonarQubeEnv('FTD_SONAR') {
                         withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) {
-                        sh 'cd apigatewayservice && mvn sonar:sonar'
+                        sh 'mvn sonar:sonar'
                 }
         }
         }
@@ -24,8 +24,6 @@ node {
                 }
         }
         stage("Docker") {
-                dir('apigatewayservice') {
-                        docker.build('apigatewayservice')
-                }
+        		docker.build('apigatewayservice')
         }
 }
