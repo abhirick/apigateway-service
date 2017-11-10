@@ -1,29 +1,38 @@
 node {
-        def mvn_version = 'MVN_HOME'
+        def image='apigatewayservice'
         stage ('SCM') {
-                checkout([$class: 'GitSCM', branches: [[name: '*/apigateway-service-dev']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'FTDGIT', url: 'https://s_fuser@del.tools.publicis.sapient.com/bitbucket/scm/ftd/apigateway-service.git']]])
+            checkout([$class: 'GitSCM', branches: [[name: '*/apigateway-service-dev']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'FTDGIT', url: 'https://s_fuser@del.tools.publicis.sapient.com/bitbucket/scm/ftd/apigateway-service.git']]])
         }
         stage('Build') {
-                withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) {
-                        sh "mvn clean package"
-                }
+        		sh "mvn clean package"
         }
         stage('Quality') {
-                withSonarQubeEnv('FTD_SONAR') {
-                        withEnv( ["PATH+MAVEN=${tool mvn_version}/bin"] ) {
-                        sh 'mvn sonar:sonar'
-                }
-        }
+            withSonarQubeEnv('FTD_SONAR') {
+            		sh 'mvn sonar:sonar'
+        		}
         }
         stage("Quality Gate"){
-                timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-                    def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-                    if (qg.status != 'OK') {
-                      error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                    }
+            timeout(time: 5, unit: 'MINUTES') { // Just in case something goes wrong, pipeline will be killed after a timeout
+                def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+                if (qg.status != 'OK') {
+                  error "Pipeline aborted due to quality gate failure: ${qg.status}"
                 }
+            }
         }
-        stage("Docker") {
-        		docker.build('apigatewayservice')
+        stage("Build Docker Image") {
+        		docker.build("${image}")
+        		sh "docker save -o ${image}.tar ${image}"
+        }
+        stage("Remote Copy") {
+			sh "scp ${image}.tar ${DOCKER_SERVICES_TARGET_USER}@${DOCKER_SERVICES_TARGET_HOST}:${REMOTE_TEMP_DIR}"
+        }
+ 		stage("Load Image Remotely") {
+			sh "ssh ${DOCKER_SERVICES_TARGET_USER}@${DOCKER_SERVICES_TARGET_HOST} \"docker load < ${REMOTE_TEMP_DIR}/${image}.tar\""
+        }
+        stage("Cleanup") {
+            sh "rm -rf ${image}.tar"
+            sh "ssh ${DOCKER_SERVICES_TARGET_USER}@${DOCKER_SERVICES_TARGET_HOST} \"rm -rf ${REMOTE_TEMP_DIR}/${image}.tar\""
+			sh "docker image rm -f ${image}"
+			sh "ssh ${DOCKER_SERVICES_TARGET_USER}@${DOCKER_SERVICES_TARGET_HOST} \"docker images -aq --filter dangling=true | xargs -r docker rmi -f\""
         }
 }
