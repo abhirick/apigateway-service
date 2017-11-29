@@ -49,13 +49,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private ResourceServerTokenServices tokenServices;
-	
+
 	@Bean
-    JwtAccessTokenConverterRestTemplateCustomizer jwtRestTemplateCustomizer(LoadBalancerInterceptor loadBalancerInterceptor) {
-    		return template -> {
-    			template.setInterceptors(Arrays.asList(loadBalancerInterceptor));
-    		};
-    }
+	JwtAccessTokenConverterRestTemplateCustomizer jwtRestTemplateCustomizer(
+			LoadBalancerInterceptor loadBalancerInterceptor) {
+		return template -> {
+			template.setInterceptors(Arrays.asList(loadBalancerInterceptor));
+		};
+	}
 
 	@Bean
 	@Primary
@@ -65,11 +66,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/authsvc/oauth/**","/authsvc/login", "/login").permitAll().anyRequest().authenticated().and().csrf()
-				.requireCsrfProtectionMatcher(csrfRequestMatcher()).csrfTokenRepository(csrfTokenRepository()).and()
-				.addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
+		http.authorizeRequests().antMatchers("/authsvc/oauth/**", "/authsvc/**login", "/login").permitAll().anyRequest()
+				.authenticated().and().csrf().requireCsrfProtectionMatcher(csrfRequestMatcher())
+				.csrfTokenRepository(csrfTokenRepository()).and().addFilterAfter(csrfHeaderFilter(), CsrfFilter.class)
 				.addFilterAfter(oAuth2AuthenticationProcessingFilter(), AbstractPreAuthenticatedProcessingFilter.class)
 				.logout().permitAll().logoutSuccessUrl("/");
+
 	}
 
 	private OAuth2AuthenticationProcessingFilter oAuth2AuthenticationProcessingFilter() {
