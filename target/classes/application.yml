@@ -1,0 +1,112 @@
+# ===================================================================
+# Spring Boot configuration.
+#
+# This configuration will be overriden by the Spring profile you use,
+# for example application-dev.yml if you use the "dev" profile.
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
+# The port on which the application runs.
+spring:
+  application:      
+    name: api-gateway-service
+  profiles:
+    active: local
+      
+server:
+  port: 8092
+
+zuul:
+  prefix: /api
+  strip-prefix: false
+  sensitiveHeaders:
+  routes:    
+    cart:
+      path: /cart/**
+      strip-prefix: false
+      serviceId: cart
+
+default:
+  ribbon:
+     ReadTimeout: 100000
+     ConnectTimeout: 100000
+     MaxAutoRetries: 2
+     MaxTotalHttpConnections: 1000
+     MaxConnectionsPerHost: 100
+     ServerListRefreshInterval: 1000
+     
+ribbon:
+  ReadTimeout: 100000
+  ConnectTimeout: 100000
+  MaxAutoRetries: 2
+  MaxAutoRetriesNextServer: 2
+  MaxTotalHttpConnections: 1000
+  MaxHttpConnectionsPerHost: 100
+  ActiveConnectionsLimit: 400
+  ServerListRefreshInterval: 1000
+
+ 
+hystrix:
+  threadpool:
+    default:
+      coreSize: 200
+      maximumSize : 200
+      queueSizeRejectionThreshold: 200
+      allowMaximumSizeToDivergeFromCoreSize: true
+  command:
+   default:
+      execution:
+        isolation:
+          sempahore:
+            maxConcurrentRequests: 200
+        timeout:
+          enabled: false    
+    
+# Actuator Configurations:
+endpoints:
+  actuator:
+    sensitive: false
+  metrics:
+    sensitive: false
+  trace:
+    sensitive: false
+  auditevents:
+    sensitive: false
+  autoconfig:
+    sensitive: false
+  beans:
+    sensitive: false
+# Mask the sensitive information in actuator response
+  configprops:
+    sensitive: false
+    keys-to-sanitize: keyValue,clientSecret
+#    path: /admin/configprops
+  dump:
+    sensitive: false
+  loggers:
+    sensitive: false
+# Mask the sensitive information in actuator response
+  env:
+    sensitive: false
+    keys-to-sanitize: key-value,clientSecret
+# path: /admin/env
+  mappings:
+    sensitive: false
+  hypermedia:
+    enabled: true
+  info:
+    sensitive: false
+    
+    
+# ===================================================================
+# Custom properties
+# ===================================================================
+
+
+   
+     
